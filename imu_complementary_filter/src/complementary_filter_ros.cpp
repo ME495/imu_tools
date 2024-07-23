@@ -73,7 +73,7 @@ ComplementaryFilterROS::ComplementaryFilterROS(
     if (use_mag_)
     {
         mag_subscriber_.reset(new MagSubscriber(
-            nh_, ros::names::resolve("imu") + "/mag", queue_size));
+            nh_, ros::names::resolve("imu") + "/mag_corrected", queue_size));
 
         sync_.reset(new Synchronizer(SyncPolicy(queue_size), *imu_subscriber_,
                                      *mag_subscriber_));
