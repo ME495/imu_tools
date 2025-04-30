@@ -75,3 +75,8 @@ install(DIRECTORY include/${PROJECT_NAME}/
 install(FILES complementary_filter_nodelet.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
+# Install launch files
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)

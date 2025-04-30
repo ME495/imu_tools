@@ -51,29 +51,29 @@ ComplementaryFilterROS::ComplementaryFilterROS(
 
     // Register publishers:
     imu_publisher_ = nh_.advertise<sensor_msgs::Imu>(
-        ros::names::resolve("imu") + "/data", queue_size);
+        output_topic_, queue_size);
 
     if (publish_debug_topics_)
     {
         rpy_publisher_ = nh_.advertise<geometry_msgs::Vector3Stamped>(
-            ros::names::resolve("imu") + "/rpy/filtered", queue_size);
+            output_topic_ + "/rpy/filtered", queue_size);
 
         if (filter_.getDoBiasEstimation())
         {
             state_publisher_ = nh_.advertise<std_msgs::Bool>(
-                ros::names::resolve("imu") + "/steady_state", queue_size);
+                output_topic_ + "/steady_state", queue_size);
         }
     }
 
     // Register IMU raw data subscriber.
     imu_subscriber_.reset(new ImuSubscriber(
-        nh_, ros::names::resolve("imu") + "/data_raw", queue_size));
+        nh_, input_topic_, queue_size));
 
     // Register magnetic data subscriber.
     if (use_mag_)
     {
         mag_subscriber_.reset(new MagSubscriber(
-            nh_, ros::names::resolve("imu") + "/mag_corrected", queue_size));
+            nh_, mag_topic_, queue_size));
 
         sync_.reset(new Synchronizer(SyncPolicy(queue_size), *imu_subscriber_,
                                      *mag_subscriber_));
@@ -114,6 +114,12 @@ void ComplementaryFilterROS::initializeParams()
     if (!nh_private_.getParam("bias_alpha", bias_alpha)) bias_alpha = 0.01;
     if (!nh_private_.getParam("do_adaptive_gain", do_adaptive_gain))
         do_adaptive_gain = true;
+    if (!nh_private_.getParam("input_topic", input_topic_)) 
+        input_topic_ = ros::names::resolve("imu") + "/data_raw";
+    if (!nh_private_.getParam("output_topic", output_topic_)) 
+        output_topic_ = ros::names::resolve("imu") + "/data";
+    if (!nh_private_.getParam("mag_topic", mag_topic_)) 
+        mag_topic_ = ros::names::resolve("imu") + "/mag";
 
     double orientation_stddev;
     if (!nh_private_.getParam("orientation_stddev", orientation_stddev))

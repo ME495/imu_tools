@@ -15,7 +15,8 @@
     <param name="use_mag" value="true"/>
     <param name="gain_acc" value="0.01"/>
     <param name="gain_mag" value="0.01"/>
-
-
+    <param name="input_topic" value="imu/data_raw"/>
+    <param name="output_topic" value="imu/data"/>
+    <param name="mag_topic" value="imu/mag"/>
   </node>
 </launch>
