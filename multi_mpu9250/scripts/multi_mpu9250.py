@@ -19,7 +19,8 @@ mpu_configs = [
     {"channel": 1, "address": MPU9050_ADDRESS_68},  # 第二个MPU9250
     {"channel": 2, "address": MPU9050_ADDRESS_68},  # 第三个MPU9250
     {"channel": 3, "address": MPU9050_ADDRESS_68},  # 第四个MPU9250
-    {"channel": 4, "address": MPU9050_ADDRESS_68}   # 第五个MPU9250
+    {"channel": 4, "address": MPU9050_ADDRESS_68},  # 第五个MPU9250
+    {"channel": 5, "address": MPU9050_ADDRESS_68}   # 第六个MPU9250
 ]
 
 class MultiMPU9250:
@@ -40,7 +41,7 @@ class MultiMPU9250:
         self.new_data_available = [False] * len(mpu_configs)
         
         # 目标采样率设置
-        self.target_rate = 200  # 目标：200Hz
+        self.target_rate = 100  # 目标：100Hz
         self.period = 1.0 / self.target_rate  # 周期时间(秒)
         
         # 数据采集运行标志
@@ -95,7 +96,7 @@ class MultiMPU9250:
                         "channel": config["channel"],
                         "mpu": mpu
                     })
-                    rospy.loginfo(f"MPU9250在通道{config['channel']}初始化成功，采样率设为200Hz")
+                    rospy.loginfo(f"MPU9250在通道{config['channel']}初始化成功，采样率设为100Hz")
                     
                 except Exception as e:
                     rospy.logerr(f"初始化通道{config['channel']}的MPU9250失败: {e}")
@@ -154,7 +155,7 @@ class MultiMPU9250:
             if data_collected:
                 with self.data_ready:
                     self.data_ready.notify_all()
-            
+            '''
             # 统计帧率
             self.frame_count += 1
             current_time = time.time()
@@ -166,6 +167,7 @@ class MultiMPU9250:
                 rospy.loginfo(f"传感器数据采集帧率: {self.fps:.2f} Hz")
                 self.frame_count = 0
                 self.last_time = current_time
+            '''
             
             # 计算本周期已用时间，等待剩余时间以实现目标频率
             elapsed = time.time() - cycle_start_time
@@ -211,7 +213,7 @@ def main():
     
     # 创建发布器列表
     publishers = []
-    for i in range(len(mpu_configs)):  # 五个传感器
+    for i in range(len(mpu_configs)):  # 六个传感器
         pubs = {
             'imu': rospy.Publisher(f'imu{i}/data_raw', Imu, queue_size=30),
         }
@@ -235,7 +237,7 @@ def main():
         imu_msg.linear_acceleration_covariance = [-1, 0, 0, 0, -1, 0, 0, 0, -1]
         imu_msgs.append(imu_msg)
     
-    rospy.loginfo("开始以200Hz的速率发布多传感器数据...")
+    rospy.loginfo("开始以100Hz的速率发布多传感器数据...")
     
     # 注册关闭回调函数
     rospy.on_shutdown(multi_mpu.shutdown)
@@ -269,7 +271,7 @@ def main():
                     
                     # 发布消息
                     publishers[i]['imu'].publish(imu_msgs[i])
-            
+            '''
             # 统计发布帧率
             frame_count += 1
             current_time = rospy.Time.now().to_sec()
@@ -280,6 +282,7 @@ def main():
                 rospy.loginfo(f"ROS消息发布帧率: {fps:.2f} Hz")
                 frame_count = 0
                 last_time = current_time
+            '''
                 
         except Exception as e:
             rospy.logerr(f"主循环处理数据错误: {e}")

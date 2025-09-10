@@ -6,12 +6,11 @@
       name="imu1_filter_node" output="screen">
     <param name="do_bias_estimation" value="true"/>
     <param name="do_adaptive_gain" value="true"/>
-    <param name="use_mag" value="true"/>
+    <param name="use_mag" value="false"/>
     <param name="gain_acc" value="0.01"/>
     <param name="gain_mag" value="0.01"/>
-    <param name="input_topic" value="/imu1/data_raw"/>
-    <param name="output_topic" value="/imu1/data"/>
-    <param name="mag_topic" value="/imu1/mag"/>
+    <param name="input_topic" value="/imu0/data_raw"/>
+    <param name="output_topic" value="/imu0/data_filter"/>
   </node>
 
   <!-- Second IMU filter -->
@@ -19,12 +18,11 @@
       name="imu2_filter_node" output="screen">
     <param name="do_bias_estimation" value="true"/>
     <param name="do_adaptive_gain" value="true"/>
-    <param name="use_mag" value="true"/>
+    <param name="use_mag" value="false"/>
     <param name="gain_acc" value="0.01"/>
     <param name="gain_mag" value="0.01"/>
-    <param name="input_topic" value="/imu2/data_raw"/>
-    <param name="output_topic" value="/imu2/data"/>
-    <param name="mag_topic" value="/imu2/mag"/>
+    <param name="input_topic" value="/imu1/data_raw"/>
+    <param name="output_topic" value="/imu1/data_filter"/>
   </node>
 
   <!-- Third IMU filter - example without magnetometer -->
@@ -32,9 +30,42 @@
       name="imu3_filter_node" output="screen">
     <param name="do_bias_estimation" value="true"/>
     <param name="do_adaptive_gain" value="true"/>
-    <param name="use_mag" value="true"/>
+    <param name="use_mag" value="false"/>
+    <param name="gain_acc" value="0.01"/>
+    <param name="input_topic" value="/imu2/data_raw"/>
+    <param name="output_topic" value="/imu2/data_filter"/>
+  </node>
+
+  <!-- Fourth IMU filter - example without magnetometer -->
+  <node pkg="imu_complementary_filter" type="complementary_filter_node"
+      name="imu4_filter_node" output="screen">
+    <param name="do_bias_estimation" value="true"/>
+    <param name="do_adaptive_gain" value="true"/>
+    <param name="use_mag" value="false"/>
     <param name="gain_acc" value="0.01"/>
     <param name="input_topic" value="/imu3/data_raw"/>
-    <param name="output_topic" value="/imu3/data"/>
+    <param name="output_topic" value="/imu3/data_filter"/>
+  </node>
+
+  <!-- Fifth IMU filter - example without magnetometer -->
+  <node pkg="imu_complementary_filter" type="complementary_filter_node"
+      name="imu5_filter_node" output="screen">
+    <param name="do_bias_estimation" value="true"/>
+    <param name="do_adaptive_gain" value="true"/>
+    <param name="use_mag" value="false"/>
+    <param name="gain_acc" value="0.01"/>
+    <param name="input_topic" value="/imu4/data_raw"/>
+    <param name="output_topic" value="/imu4/data_filter"/>
+  </node>
+
+  <!-- Sixth IMU filter - example without magnetometer -->
+  <node pkg="imu_complementary_filter" type="complementary_filter_node"
+      name="imu6_filter_node" output="screen">
+    <param name="do_bias_estimation" value="true"/>
+    <param name="do_adaptive_gain" value="true"/>
+    <param name="use_mag" value="false"/>
+    <param name="gain_acc" value="0.01"/>
+    <param name="input_topic" value="/imu5/data_raw"/>
+    <param name="output_topic" value="/imu5/data_filter"/>
   </node>
 </launch> 
