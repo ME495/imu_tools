@@ -10,9 +10,9 @@ try:
     import smbus2 as smbus
 except ImportError:
     print("\n", "Using Fake SMBus", "\n", "Install requirements.", "\n")
-    from mpu6050.fake_smbus import FakeSmbus as smbus
+    from fake_smbus import FakeSmbus as smbus
 
-from mpu6050.registers import *
+from registers import *
 import time
 
 class MPU6050:

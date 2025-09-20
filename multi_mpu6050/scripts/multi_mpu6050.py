@@ -3,8 +3,8 @@
 
 import rospy
 from sensor_msgs.msg import Imu
-from mpu6050.registers import *
-from mpu6050.mpu_6050 import MPU6050
+from registers import *
+from mpu_6050 import MPU6050
 import math
 import numpy as np
 import smbus

@@ -16,10 +16,9 @@ include_directories(
 )
 
 catkin_install_python(PROGRAMS
-  scripts/mpu6050/__init__.py
-  scripts/mpu6050/fake_smbus.py
-  scripts/mpu6050/mpu_6050.py
-  scripts/mpu6050/registers.py
+  scripts/fake_smbus.py
+  scripts/mpu_6050.py
+  scripts/registers.py
   scripts/multi_mpu6050.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
