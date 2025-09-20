@@ -81,8 +81,8 @@ class MultiMPU6050:
                     
                     # 配置和校准传感器
                     mpu.configure()
-                    mpu.calibrateMPU6050()
-                    mpu.configure()
+                    # mpu.calibrateMPU6050()
+                    # mpu.configure()
                     
                     self.mpus.append({
                         "channel": config["channel"],
