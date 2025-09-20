@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(multi_mpu6050)
+
+find_package(catkin REQUIRED COMPONENTS
+  rospy
+  sensor_msgs
+  sensor_msgs_ext
+)
+
+catkin_package(
+  CATKIN_DEPENDS rospy sensor_msgs sensor_msgs_ext
+)
+
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
+catkin_install_python(PROGRAMS
+  scripts/mpu6050/__init__.py
+  scripts/mpu6050/fake_smbus.py
+  scripts/mpu6050/mpu_6050.py
+  scripts/mpu6050/registers.py
+  scripts/multi_mpu6050.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+install(DIRECTORY launch config
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+) 

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>multi_mpu9250</name>
+  <version>0.1.0</version>
+  <description>
+    驱动和处理多个MPU6050 IMU传感器的包
+  </description>
+  <maintainer email="user@example.com">IMU用户</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>sensor_msgs</depend>
+  <depend>sensor_msgs_ext</depend>
+  <depend>python-smbus</depend>
+  <depend>imu_complementary_filter</depend>
+  <depend>rviz_imu_plugin</depend>
+
+  <export>
+  </export>
+</package> 
