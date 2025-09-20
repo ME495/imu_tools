@@ -92,6 +92,8 @@ class MultiMPU6050:
                     
                 except Exception as e:
                     rospy.logerr(f"初始化通道{config['channel']}的MPU6050失败: {e}")
+                    import traceback
+                    traceback.print_exc()
         
         # 启动单一数据采集线程
         self.data_thread = threading.Thread(target=self.data_collection_thread)
