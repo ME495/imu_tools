@@ -45,8 +45,8 @@ class MultiMPU6050:
         self.new_data_available = [False] * len(mpu_configs)
         
         # 目标采样率设置
-        self.target_rate = 100  # 目标：100Hz
-        self.period = 1.0 / self.target_rate  # 周期时间(秒)
+        self.target_rate = 120  # 目标帧率
+        self.period = 1.0 / self.target_rate  # 周期时间(秒)1
         
         # 数据采集运行标志
         self.running = True
@@ -88,7 +88,7 @@ class MultiMPU6050:
                         "channel": config["channel"],
                         "mpu": mpu
                     })
-                    rospy.loginfo(f"MPU6050在通道{config['channel']}初始化成功，采样率设为100Hz")
+                    rospy.loginfo(f"MPU6050在通道{config['channel']}初始化成功，采样率设为{self.target_rate}Hz")
                     
                 except Exception as e:
                     rospy.logerr(f"初始化通道{config['channel']}的MPU6050失败: {e}")
@@ -208,7 +208,7 @@ def main():
     publishers = []
     for i in range(len(mpu_configs)):  # 六个传感器
         pubs = {
-            'imu': rospy.Publisher(f'imu{i}/data_raw', Imu, queue_size=30),
+            'imu': rospy.Publisher(f'imu{i}/data_raw', Imu, queue_size=100),
         }
         publishers.append(pubs)
     
@@ -229,9 +229,9 @@ def main():
         imu_msg.angular_velocity_covariance = [-1, 0, 0, 0, -1, 0, 0, 0, -1]
         imu_msg.linear_acceleration_covariance = [-1, 0, 0, 0, -1, 0, 0, 0, -1]
         imu_msgs.append(imu_msg)
-    
-    rospy.loginfo("开始以100Hz的速率发布多传感器数据...")
-    
+
+    rospy.loginfo(f"开始以{multi_mpu.target_rate}Hz的速率发布多传感器数据...")
+
     # 注册关闭回调函数
     rospy.on_shutdown(multi_mpu.shutdown)
     
