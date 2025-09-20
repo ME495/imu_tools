@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>multi_mpu9250</name>
+  <name>multi_mpu6050</name>
   <version>0.1.0</version>
   <description>
     驱动和处理多个MPU6050 IMU传感器的包
