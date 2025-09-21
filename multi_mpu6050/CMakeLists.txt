@@ -20,6 +20,7 @@ catkin_install_python(PROGRAMS
   scripts/mpu_6050.py
   scripts/registers.py
   scripts/multi_mpu6050.py
+  scripts/gyro_calibrator.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
