@@ -101,9 +101,14 @@ class MultiMPU6050:
         self.data_thread.start()
 
     def data_collection_thread(self):
-        """单一线程处理所有传感器数据采集"""
+        """
+        【优化版】单一线程处理所有传感器数据采集。
+        采用精确的周期定时策略，防止误差累积。
+        """
+        # 使用 time.perf_counter() 以获得更高精度的计时
+        next_cycle_time = time.perf_counter()
+        
         while self.running and not rospy.is_shutdown():
-            cycle_start_time = time.time()
             data_collected = False
             
             with self.i2c_lock:
@@ -111,8 +116,9 @@ class MultiMPU6050:
                     try:
                         # 选择对应的通道
                         self.select_channel(mpu_data["channel"])
+                        
                         # 小延时确保通道切换完成
-                        time.sleep(0.0001)
+                        # time.sleep(0.0001)
                         
                         mpu : MPU6050 = mpu_data["mpu"]
                         
@@ -122,7 +128,6 @@ class MultiMPU6050:
                         
                         # 将数据放入队列
                         imu_data = {
-                            'timestamp': rospy.Time.now(),
                             'accel': accel,
                             'gyro': gyro
                         }
@@ -162,12 +167,21 @@ class MultiMPU6050:
                 self.last_time = current_time
             '''
             
-            # 计算本周期已用时间，等待剩余时间以实现目标频率
-            elapsed = time.time() - cycle_start_time
-            if elapsed < self.period:
-                time.sleep(self.period - elapsed)
-            elif elapsed > self.period * 1.1:  # 如果用时超过目标周期的110%，记录警告
-                rospy.logwarn(f"采集周期耗时过长: {elapsed*1000:.2f}ms，可能无法达到{self.target_rate}Hz的目标")
+            # --- 精确定时 ---
+            # 计算下一个周期的目标唤醒时间
+            next_cycle_time += self.period
+            
+            # 计算需要睡眠的时间
+            sleep_duration = next_cycle_time - time.perf_counter()
+
+            if sleep_duration > 0:
+                time.sleep(sleep_duration)
+            else:
+                # 如果已经超时，立即进入下一个循环，并记录警告
+                rospy.logwarn(f"采集周期耗时过长，错过目标时间点 {-sleep_duration*1000:.2f}ms")
+                # 如果系统持续超时，可能需要重新同步目标时间，防止误差越拉越大
+                if sleep_duration < -self.period:
+                    next_cycle_time = time.perf_counter() + self.period
     
     def get_latest_data(self, imu_index):
         """获取指定IMU的最新数据"""
@@ -244,6 +258,9 @@ def main():
             # 无限期等待新数据可用（完全阻塞）
             ready_imu_indices = multi_mpu.wait_for_data(timeout=None)
             
+            # 获取当前时间，作为这一批数据的时间戳
+            now = rospy.Time.now()
+            
             # 处理所有有新数据的IMU
             for i in ready_imu_indices:
                 # 获取最新数据
@@ -251,7 +268,7 @@ def main():
                 
                 if imu_data:
                     # 更新时间戳
-                    imu_msgs[i].header.stamp = imu_data['timestamp']
+                    imu_msgs[i].header.stamp = now
                     
                     # 填充IMU消息
                     imu_msgs[i].linear_acceleration.x = imu_data['accel'][0] * G_TO_M_S2
