@@ -308,9 +308,9 @@ def main():
                     imu_msgs[i].linear_acceleration.y = imu_data['accel'][1] * G_TO_M_S2 * aScale[i][1] + aBias[i][1]
                     imu_msgs[i].linear_acceleration.z = imu_data['accel'][2] * G_TO_M_S2 * aScale[i][2] + aBias[i][2]
                     
-                    imu_msgs[i].angular_velocity.x = imu_data['gyro'][0] * DEG_TO_RAD + gBias[i][0]
-                    imu_msgs[i].angular_velocity.y = imu_data['gyro'][1] * DEG_TO_RAD + gBias[i][1]
-                    imu_msgs[i].angular_velocity.z = imu_data['gyro'][2] * DEG_TO_RAD + gBias[i][2]
+                    imu_msgs[i].angular_velocity.x = imu_data['gyro'][0] * DEG_TO_RAD - gBias[i][0]
+                    imu_msgs[i].angular_velocity.y = imu_data['gyro'][1] * DEG_TO_RAD - gBias[i][1]
+                    imu_msgs[i].angular_velocity.z = imu_data['gyro'][2] * DEG_TO_RAD - gBias[i][2]
                     
                     # 填充扩展加速度消息
                     ext_acc_msgs[i].x = imu_msgs[i].linear_acceleration.x
