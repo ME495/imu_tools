@@ -28,6 +28,33 @@ mpu_configs = [
     {"channel": 5, "address": MPU6050_ADDRESS_68}   # 第六个MPU9250
 ]
 
+aScale = [
+    [0.992899, 1.002906, 0.986993],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0]
+]
+
+aBias = [
+    [0.126977, 0.759203, -1.740969],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0]
+]
+
+gBias = [
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0]
+]
+
 class MultiMPU6050:
     def __init__(self):
         # 初始化I2C总线
@@ -277,13 +304,13 @@ def main():
                     imu_msgs[i].header.stamp = now
                     
                     # 填充IMU消息
-                    imu_msgs[i].linear_acceleration.x = imu_data['accel'][0] * G_TO_M_S2
-                    imu_msgs[i].linear_acceleration.y = imu_data['accel'][1] * G_TO_M_S2
-                    imu_msgs[i].linear_acceleration.z = imu_data['accel'][2] * G_TO_M_S2
+                    imu_msgs[i].linear_acceleration.x = imu_data['accel'][0] * G_TO_M_S2 * aScale[i][0] - aBias[i][0]
+                    imu_msgs[i].linear_acceleration.y = imu_data['accel'][1] * G_TO_M_S2 * aScale[i][1] - aBias[i][1]
+                    imu_msgs[i].linear_acceleration.z = imu_data['accel'][2] * G_TO_M_S2 * aScale[i][2] - aBias[i][2]
                     
-                    imu_msgs[i].angular_velocity.x = imu_data['gyro'][0] * DEG_TO_RAD
-                    imu_msgs[i].angular_velocity.y = imu_data['gyro'][1] * DEG_TO_RAD
-                    imu_msgs[i].angular_velocity.z = imu_data['gyro'][2] * DEG_TO_RAD
+                    imu_msgs[i].angular_velocity.x = imu_data['gyro'][0] * DEG_TO_RAD - gBias[i][0]
+                    imu_msgs[i].angular_velocity.y = imu_data['gyro'][1] * DEG_TO_RAD - gBias[i][1]
+                    imu_msgs[i].angular_velocity.z = imu_data['gyro'][2] * DEG_TO_RAD - gBias[i][2]
                     
                     # 填充扩展加速度消息
                     ext_acc_msgs[i].x = imu_msgs[i].linear_acceleration.x
