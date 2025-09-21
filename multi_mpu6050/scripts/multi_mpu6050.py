@@ -7,6 +7,7 @@ sys.path.insert(0, join(abspath(dirname(__file__))))
 
 import rospy
 from sensor_msgs.msg import Imu
+from sensor_msgs_ext.msg import accelerometer
 from registers import *
 from mpu_6050 import MPU6050
 import math
@@ -223,6 +224,7 @@ def main():
     for i in range(len(mpu_configs)):  # 六个传感器
         pubs = {
             'imu': rospy.Publisher(f'imu{i}/data_raw', Imu, queue_size=100),
+            'ext_acc': rospy.Publisher(f'imu{i}/accelerometer', accelerometer, queue_size=100)
         }
         publishers.append(pubs)
     
@@ -236,6 +238,7 @@ def main():
     
     # 初始化IMU消息
     imu_msgs = []
+    ext_acc_msgs = []
     for i in range(len(mpu_configs)):
         imu_msg = Imu()
         imu_msg.header.frame_id = f"imu{i}_link"
@@ -243,6 +246,9 @@ def main():
         imu_msg.angular_velocity_covariance = [-1, 0, 0, 0, -1, 0, 0, 0, -1]
         imu_msg.linear_acceleration_covariance = [-1, 0, 0, 0, -1, 0, 0, 0, -1]
         imu_msgs.append(imu_msg)
+        
+        ext_acc_msg = accelerometer()
+        ext_acc_msgs.append(ext_acc_msg)
 
     rospy.loginfo(f"开始以{multi_mpu.target_rate}Hz的速率发布多传感器数据...")
 
@@ -279,8 +285,14 @@ def main():
                     imu_msgs[i].angular_velocity.y = imu_data['gyro'][1] * DEG_TO_RAD
                     imu_msgs[i].angular_velocity.z = imu_data['gyro'][2] * DEG_TO_RAD
                     
+                    # 填充扩展加速度消息
+                    ext_acc_msgs[i].x = imu_msgs[i].linear_acceleration.x
+                    ext_acc_msgs[i].y = imu_msgs[i].linear_acceleration.y
+                    ext_acc_msgs[i].z = imu_msgs[i].linear_acceleration.z
+                    
                     # 发布消息
                     publishers[i]['imu'].publish(imu_msgs[i])
+                    publishers[i]['ext_acc'].publish(ext_acc_msgs[i])
             '''
             # 统计发布帧率
             frame_count += 1
