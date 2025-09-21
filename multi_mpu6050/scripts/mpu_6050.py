@@ -107,12 +107,12 @@ class MPU6050:
         self.writeMaster(PWR_MGMT_1, 0x01, 0.1)
         
         # DLPF_CFG
-        self.writeMaster(CONFIG, 0x00)
-        # self.writeMaster(CONFIG, 0x03)
+        # self.writeMaster(CONFIG, 0x00)
+        self.writeMaster(CONFIG, 0x03) # enable DLPF, 44Hz bandwidth, 1000Hz rate
 
         # sample rate divider
-        self.writeMaster(SMPLRT_DIV, 0x00)
-        # self.writeMaster(SMPLRT_DIV, 0x04)        
+        # self.writeMaster(SMPLRT_DIV, 0x00)
+        self.writeMaster(SMPLRT_DIV, 0x07) # 1000Hz/(1+7) = 125Hz sample rate
 
         # gyro full scale select
         self.writeMaster(GYRO_CONFIG, gfs << 3)
@@ -151,12 +151,12 @@ class MPU6050:
             self.writeSlave(PWR_MGMT_1, 0x01, 0.1)
 
             # DLPF_CFG
-            self.writeSlave(CONFIG, 0x00)
-            # self.writeSlave(CONFIG, 0x03)
+            # self.writeSlave(CONFIG, 0x00)
+            self.writeSlave(CONFIG, 0x03) # enable DLPF, 44Hz bandwidth, 1000Hz rate
 
             # sample rate divider
-            self.writeSlave(SMPLRT_DIV, 0x00)
-            # self.writeSlave(SMPLRT_DIV, 0x04)    
+            # self.writeSlave(SMPLRT_DIV, 0x00)
+            self.writeSlave(SMPLRT_DIV, 0x07) # 1000Hz/(1+7) = 125Hz sample rate
 
             # gyro full scale select
             self.writeSlave(GYRO_CONFIG, gfs << 3)
