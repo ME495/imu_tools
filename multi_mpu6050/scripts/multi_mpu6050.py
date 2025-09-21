@@ -45,7 +45,7 @@ class MultiMPU6050:
         self.new_data_available = [False] * len(mpu_configs)
         
         # 目标采样率设置
-        self.target_rate = 120  # 目标帧率
+        self.target_rate = 125  # 目标帧率
         self.period = 1.0 / self.target_rate  # 周期时间(秒)1
         
         # 数据采集运行标志
