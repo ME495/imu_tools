@@ -29,7 +29,7 @@ mpu_configs = [
 ]
 
 aScale = [
-    [0.992899, 1.002906, 0.986993],
+    [0.992336, 0.999752, 0.993463],
     [0.997636, 1.005341, 0.968575],
     [0.991392, 0.995892, 0.986960],
     [0.999512, 1.003761, 0.980797],
@@ -38,7 +38,7 @@ aScale = [
 ]
 
 aBias = [
-    [ 0.126977,  0.759203, -1.740969],
+    [ 0.134987,  0.768437, -1.530391],
     [-0.405112, -0.057797,  0.740100],
     [-0.366330, -0.083155,  0.307014],
     [-0.607038, -0.043007, -2.103488],
@@ -46,14 +46,24 @@ aBias = [
     [-0.376146,  0.243977,  1.232993]
 ]
 
-gBias = [
-    [ 0.019616, -0.034057, -0.035961],
-    [-0.059039, -0.002755,  0.068250],
-    [-0.017145,  0.035255,  0.127637],
-    [ 0.035261, -0.148139,  0.007651],
-    [-0.066121, -0.020660, -0.021138],
-    [-0.061754,  0.004390, -0.010513]
-]
+# aScale = [
+#     [1., 1., 1.],
+#     [1., 1., 1.],
+#     [1., 1., 1.],
+#     [1., 1., 1.],
+#     [1., 1., 1.],
+#     [1., 1., 1.]
+# ]
+# 
+# aBias = [
+#     [ 0., 0., 0.],
+#     [ 0., 0., 0.],
+#     [ 0., 0., 0.],
+#     [ 0., 0., 0.],
+#     [ 0., 0., 0.],
+#     [ 0., 0., 0.]
+# ]
+
 
 class MultiMPU6050:
     def __init__(self):
@@ -73,7 +83,7 @@ class MultiMPU6050:
         self.new_data_available = [False] * len(mpu_configs)
         
         # 目标采样率设置
-        self.target_rate = 125  # 目标帧率
+        self.target_rate = 120  # 目标帧率
         self.period = 1.0 / self.target_rate  # 周期时间(秒)1
         
         # 数据采集运行标志
@@ -109,8 +119,9 @@ class MultiMPU6050:
                     
                     # 配置和校准传感器
                     mpu.configure()
-                    # mpu.calibrateMPU6050()
-                    # mpu.configure()
+                    print(f"校准imu{len(self.mpus)}的陀螺仪")
+                    mpu.calibrateMPU6050()
+                    mpu.configure()
                     
                     self.mpus.append({
                         "channel": config["channel"],
@@ -308,9 +319,9 @@ def main():
                     imu_msgs[i].linear_acceleration.y = imu_data['accel'][1] * G_TO_M_S2 * aScale[i][1] + aBias[i][1]
                     imu_msgs[i].linear_acceleration.z = imu_data['accel'][2] * G_TO_M_S2 * aScale[i][2] + aBias[i][2]
                     
-                    imu_msgs[i].angular_velocity.x = imu_data['gyro'][0] * DEG_TO_RAD - gBias[i][0]
-                    imu_msgs[i].angular_velocity.y = imu_data['gyro'][1] * DEG_TO_RAD - gBias[i][1]
-                    imu_msgs[i].angular_velocity.z = imu_data['gyro'][2] * DEG_TO_RAD - gBias[i][2]
+                    imu_msgs[i].angular_velocity.x = imu_data['gyro'][0] * DEG_TO_RAD
+                    imu_msgs[i].angular_velocity.y = imu_data['gyro'][1] * DEG_TO_RAD
+                    imu_msgs[i].angular_velocity.z = imu_data['gyro'][2] * DEG_TO_RAD
                     
                     # 填充扩展加速度消息
                     ext_acc_msgs[i].x = imu_msgs[i].linear_acceleration.x

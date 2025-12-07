@@ -534,11 +534,12 @@ class MPU6050:
         ]
 
         # Output scaled accelerometer biases for manual subtraction in the main program
-        self.abias = [
-            (accel_bias[0] / ACCEL_SCALE_MODIFIER_2G_DIV),
-            (accel_bias[1] / ACCEL_SCALE_MODIFIER_2G_DIV),
-            (accel_bias[2] / ACCEL_SCALE_MODIFIER_2G_DIV)
-        ]
+        # self.abias = [
+        #     (accel_bias[0] / ACCEL_SCALE_MODIFIER_2G_DIV),
+        #     (accel_bias[1] / ACCEL_SCALE_MODIFIER_2G_DIV),
+        #     (accel_bias[2] / ACCEL_SCALE_MODIFIER_2G_DIV)
+        # ]
+        self.abias = [0., 0., 0.]
 
         if self.hasSlave():
 

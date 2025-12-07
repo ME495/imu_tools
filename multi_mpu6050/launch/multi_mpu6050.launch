@@ -5,6 +5,7 @@
   </node>
 
   <!-- 为每个IMU启动Complementary滤波器 -->
+  <!--
   <group ns="imu0">
     <node pkg="imu_complementary_filter" type="complementary_filter_node"
       name="imu_filter" output="screen">
@@ -76,6 +77,7 @@
       <param name="output_topic" value="/imu5/data"/>
     </node>
   </group>
+  -->
 
   <!-- 可选：启动rviz可视化 -->
   <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find multi_mpu6050)/config/multi_imu_viz.rviz" required="false"/> -->
