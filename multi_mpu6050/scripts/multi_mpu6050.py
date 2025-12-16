@@ -312,7 +312,7 @@ def main():
                 
                 if imu_data:
                     # 更新时间戳
-                    imu_msgs[i].header.stamp = now
+                    imu_msgs[i].header.stamp = rospy.Time.now()
                     
                     # 填充IMU消息
                     imu_msgs[i].linear_acceleration.x = imu_data['accel'][0] * G_TO_M_S2 * aScale[i][0] + aBias[i][0]
