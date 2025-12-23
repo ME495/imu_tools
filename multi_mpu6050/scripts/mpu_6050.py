@@ -110,9 +110,9 @@ class MPU6050:
         # self.writeMaster(CONFIG, 0x00)
         self.writeMaster(CONFIG, 0x03) # enable DLPF, 44Hz bandwidth, 1000Hz rate
 
-        # sample rate divider
+        # sample rate divider -> set to 100Hz
         # self.writeMaster(SMPLRT_DIV, 0x00)
-        self.writeMaster(SMPLRT_DIV, 0x07) # 1000Hz/(1+7) = 125Hz sample rate
+        self.writeMaster(SMPLRT_DIV, 0x09) # 1000Hz/(1+9) = 100Hz sample rate
 
         # gyro full scale select
         self.writeMaster(GYRO_CONFIG, gfs << 3)
@@ -121,8 +121,8 @@ class MPU6050:
         self.writeMaster(ACCEL_CONFIG, afs << 3)
 
         # A_DLPFCFG
-        self.writeMaster(ACCEL_CONFIG_2, 0x00)
-        # self.writeMaster(ACCEL_CONFIG_2, 0x03)
+        # self.writeMaster(ACCEL_CONFIG_2, 0x00)
+        self.writeMaster(ACCEL_CONFIG_2, 0x03)
 
         if not(self.hasSlave()):
             
@@ -154,9 +154,9 @@ class MPU6050:
             # self.writeSlave(CONFIG, 0x00)
             self.writeSlave(CONFIG, 0x03) # enable DLPF, 44Hz bandwidth, 1000Hz rate
 
-            # sample rate divider
+            # sample rate divider -> set to 100Hz
             # self.writeSlave(SMPLRT_DIV, 0x00)
-            self.writeSlave(SMPLRT_DIV, 0x07) # 1000Hz/(1+7) = 125Hz sample rate
+            self.writeSlave(SMPLRT_DIV, 0x09) # 1000Hz/(1+9) = 100Hz sample rate
 
             # gyro full scale select
             self.writeSlave(GYRO_CONFIG, gfs << 3)
@@ -165,9 +165,8 @@ class MPU6050:
             self.writeSlave(ACCEL_CONFIG, afs << 3)
 
             # A_DLPFCFG
-            self.writeSlave(ACCEL_CONFIG_2, 0x00)
-            # self.writeSlave(ACCEL_CONFIG_2, 0x03)
-            # self.writeSlave(ACCEL_CONFIG_2, 0x05)
+            # self.writeSlave(ACCEL_CONFIG_2, 0x00)
+            self.writeSlave(ACCEL_CONFIG_2, 0x03)
 
             # BYPASS_EN enable
             self.writeSlave(INT_PIN_CFG, 0x02, 0.1)

@@ -2,18 +2,22 @@ cmake_minimum_required(VERSION 2.8.3)
 project(multi_mpu6050)
 
 find_package(catkin REQUIRED COMPONENTS
+  roscpp
   rospy
   sensor_msgs
   sensor_msgs_ext
 )
 
 catkin_package(
-  CATKIN_DEPENDS rospy sensor_msgs sensor_msgs_ext
+  CATKIN_DEPENDS roscpp rospy sensor_msgs sensor_msgs_ext
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+add_executable(multi_mpu6050_node_cpp src/multi_mpu6050_node.cpp)
+target_link_libraries(multi_mpu6050_node_cpp ${catkin_LIBRARIES})
 
 catkin_install_python(PROGRAMS
   scripts/fake_smbus.py
