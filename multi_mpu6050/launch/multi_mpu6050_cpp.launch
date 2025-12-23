@@ -1,0 +1,6 @@
+<launch>
+    <!-- 启动 C++ 版本的多 MPU6050 采集节点 -->
+    <node pkg="multi_mpu6050" type="multi_mpu6050_node_cpp" name="multi_mpu6050_node" output="screen">
+        <!-- 如果将来需要添加参数，可以在这里配置 -->
+    </node>
+</launch>
