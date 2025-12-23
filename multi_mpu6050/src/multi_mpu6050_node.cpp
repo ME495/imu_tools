@@ -169,15 +169,17 @@ private:
     std::condition_variable queue_cv_;
     std::deque<FrameData> queue_;
 
-    void selectChannel(int channel) {
+    bool selectChannel(int channel) {
         if (ioctl(i2c_fd_, I2C_SLAVE, PCA9548A_ADDR) < 0) {
-            ROS_ERROR_THROTTLE(1, "Failed to select PCA9548A address: %s", strerror(errno));
-            return;
+            ROS_WARN_THROTTLE(1, "Failed to select PCA9548A address: %s", strerror(errno));
+            return false;
         }
         uint8_t data = 1 << channel;
         if (write(i2c_fd_, &data, 1) != 1) {
-            ROS_ERROR_THROTTLE(1, "Failed to switch to channel %d: %s", channel, strerror(errno));
+            ROS_WARN_THROTTLE(1, "Failed to switch to channel %d: %s", channel, strerror(errno));
+            return false;
         }
+        return true;
     }
 
     void writeReg(uint8_t reg, uint8_t val) {
@@ -188,10 +190,15 @@ private:
     }
 
     void initMpu(int channel) {
-        selectChannel(channel);
+        if (!selectChannel(channel)) {
+            ROS_FATAL("Failed to select channel %d during initialization.", channel);
+            ros::shutdown();
+            exit(1);
+        }
         if (ioctl(i2c_fd_, I2C_SLAVE, MPU6050_ADDR) < 0) {
-            ROS_ERROR("Failed to select MPU6050 address on channel %d: %s", channel, strerror(errno));
-            return;
+            ROS_FATAL("Failed to select MPU6050 address on channel %d: %s", channel, strerror(errno));
+            ros::shutdown();
+            exit(1);
         }
 
         writeReg(REG_PWR_MGMT_1, 0x80); // Reset
@@ -212,7 +219,10 @@ private:
 
         for (int i = 0; i < samples; ++i) {
             for (const auto& config : configs_) {
-                selectChannel(config.channel);
+                if (!selectChannel(config.channel)) {
+                    ROS_WARN_THROTTLE(1, "Calibration: Failed to select channel %d. Skipping.", config.channel);
+                    continue;
+                }
                 if (ioctl(i2c_fd_, I2C_SLAVE, MPU6050_ADDR) < 0) {
                     ROS_WARN_THROTTLE(1, "Calibration: Failed to select MPU on channel %d: %s", config.channel, strerror(errno));
                     continue;
@@ -258,7 +268,10 @@ private:
 
             for (const auto& config : configs_) {
                 // 1. Switch Channel
-                selectChannel(config.channel);
+                if (!selectChannel(config.channel)) {
+                    ROS_WARN_THROTTLE(1, "Failed to switch to channel %d. Skipping.", config.channel);
+                    continue;
+                }
                 
                 // 2. Select MPU
                 if (ioctl(i2c_fd_, I2C_SLAVE, MPU6050_ADDR) < 0) {
