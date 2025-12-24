@@ -57,22 +57,40 @@ struct FrameData {
 
 // Calibration Data
 const double aScale[6][3] = {
-    {0.992336, 0.999752, 0.993463}, // Channel 0
-    {0.997636, 1.005341, 0.968575}, // Channel 1
-    {0.991392, 0.995892, 0.986960}, // Channel 2
-    {0.999512, 1.003761, 0.980797}, // Channel 3
-    {1.001137, 0.992201, 0.976579}, // Channel 4
-    {1.002384, 1.000387, 0.977064}  // Channel 5
+    {0.9968333815, 1.0047237210, 0.9800578609}, // Channel 0
+    {1.0040362671, 0.9938512167, 0.9870425091}, // Channel 1
+    {0.9937053441, 1.0037685366, 0.9903839457}, // Channel 2
+    {0.9990213834, 1.0037774456, 0.9772431261}, // Channel 3
+    {0.9994529031, 0.9971132517, 0.9892505038}, // Channel 4
+    {0.9893060013, 0.9949944391, 0.9841812878}  // Channel 5
 };
 
 const double aBias[6][3] = {
-    { 0.134987,  0.768437, -1.530391}, // Channel 0
-    {-0.405112, -0.057797,  0.740100}, // Channel 1
-    {-0.366330, -0.083155,  0.307014}, // Channel 2
-    {-0.607038, -0.043007, -2.103488}, // Channel 3
-    {-0.458899,  0.161197,  0.670736}, // Channel 4
-    {-0.376146,  0.243977,  1.232993}  // Channel 5
+    {-0.5011657661, 0.1296881335, 0.6807852740}, // Channel 0
+    {-0.8867132237,-5.9778617655, 0.7051673104}, // Channel 1
+    {-0.2338010518, 0.0036652022,-0.1369682981}, // Channel 2
+    {-0.3154475471, 0.3312055625,-4.2380675780}, // Channel 3
+    {-0.4088827418,-0.0722272956,-0.0757277605}, // Channel 4
+    { 5.4408319901,-3.3678231232, 0.4706781447}  // Channel 5
 };
+
+// const double aScale[6][3] = {
+//     {1., 1., 1.}, // Channel 0
+//     {1., 1., 1.}, // Channel 1
+//     {1., 1., 1.}, // Channel 2
+//     {1., 1., 1.}, // Channel 3
+//     {1., 1., 1.}, // Channel 4
+//     {1., 1., 1.}  // Channel 5
+// };
+
+// const double aBias[6][3] = {
+//     { 0., 0., 0.}, // Channel 0
+//     { 0., 0., 0.}, // Channel 1
+//     { 0., 0., 0.}, // Channel 2
+//     { 0., 0., 0.}, // Channel 3
+//     { 0., 0., 0.}, // Channel 4
+//     { 0., 0., 0.}  // Channel 5
+// };
 
 class MultiMpuNode {
 public:
@@ -88,10 +106,10 @@ public:
         // Define Sensors
         configs_.push_back({0, 0}); // Index 0, Channel 0
         configs_.push_back({1, 1}); // Index 1, Channel 1
-        // Channel 2 skipped
-        configs_.push_back({2, 3}); // Index 2, Channel 3
-        configs_.push_back({3, 4}); // Index 3, Channel 4
-        configs_.push_back({4, 5}); // Index 4, Channel 5
+        configs_.push_back({2, 2}); // Index 2, Channel 2
+        configs_.push_back({3, 3}); // Index 3, Channel 3
+        configs_.push_back({4, 4}); // Index 4, Channel 4
+        configs_.push_back({5, 5}); // Index 5, Channel 5
 
         // Initialize Publishers and Sensors
         for (const auto& config : configs_) {
@@ -209,6 +227,8 @@ private:
         writeReg(REG_SMPLRT_DIV, SMPLRT_DIV_100HZ);
         writeReg(REG_GYRO_CONFIG, GFS_2000DPS);
         writeReg(REG_ACCEL_CONFIG, AFS_16G);
+
+        ROS_INFO("Initialized MPU6050 on channel %d", channel);
     }
 
     void acquireLoop() {

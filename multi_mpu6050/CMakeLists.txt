@@ -19,6 +19,9 @@ include_directories(
 add_executable(multi_mpu6050_node_cpp src/multi_mpu6050_node.cpp)
 target_link_libraries(multi_mpu6050_node_cpp ${catkin_LIBRARIES})
 
+add_executable(imu_magnitude_printer src/imu_magnitude_printer.cpp)
+target_link_libraries(imu_magnitude_printer ${catkin_LIBRARIES})
+
 catkin_install_python(PROGRAMS
   scripts/fake_smbus.py
   scripts/mpu_6050.py
