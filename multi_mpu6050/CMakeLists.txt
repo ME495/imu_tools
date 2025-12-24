@@ -22,15 +22,6 @@ target_link_libraries(multi_mpu6050_node_cpp ${catkin_LIBRARIES})
 add_executable(imu_magnitude_printer src/imu_magnitude_printer.cpp)
 target_link_libraries(imu_magnitude_printer ${catkin_LIBRARIES})
 
-catkin_install_python(PROGRAMS
-  scripts/fake_smbus.py
-  scripts/mpu_6050.py
-  scripts/registers.py
-  scripts/multi_mpu6050.py
-  scripts/gyro_calibrator.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
 install(DIRECTORY launch config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 ) 
